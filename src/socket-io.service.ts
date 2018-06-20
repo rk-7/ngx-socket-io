@@ -8,7 +8,7 @@ import { SocketIoConfig } from './config/socket-io.config';
 import { SOCKET_CONFIG_TOKEN } from './socket-io.module';
 
 export class WrappedSocket {
-    subscribersCounter : number = 0;
+    subscribersCounter: number = 0;
     ioSocket: any;
     emptyConfig: SocketIoConfig = {
         url: '',
@@ -53,15 +53,15 @@ export class WrappedSocket {
 
     fromEvent<T>(eventName: string): Observable<T> {
         this.subscribersCounter++;
-        return Observable.create( (observer: any) => {
-             this.ioSocket.on(eventName, (data: T) => {
-                 observer.next(data);
-             });
-             return () => {
-                 if (this.subscribersCounter === 1)
+        return Observable.create((observer: any) => {
+            this.ioSocket.on(eventName, (data: T) => {
+                observer.next(data);
+            });
+            return () => {
+                if (this.subscribersCounter === 1)
                     this.ioSocket.removeListener(eventName);
             };
-        }).share();
+        }).pipe(share())
     }
 
     fromOneTimeEvent<T>(eventName: string): Promise<T> {
